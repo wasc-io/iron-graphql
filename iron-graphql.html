@@ -36,9 +36,10 @@ Simple iron-graphql element. Query GraphQL APIs with this elements.
             notify: true,
           },
           lastResponse: {
-            type: String,
+            type: JSON,
             notify: true,
             readOnly: true,
+            value: {}
           }
         }
       }
@@ -49,7 +50,8 @@ Simple iron-graphql element. Query GraphQL APIs with this elements.
 
       generateRequest() {
         post(this.url, { query: this.query }).then((response) => {
-          this.lastResponse = response;
+          this.set('lastResponse.data', response.data);
+
           this.dispatchEvent(new CustomEvent('response',  {
             detail: response,
             composed: true,
