@@ -1,0 +1,94 @@
+<!--
+Copyright (c) 2017 wasc GbR. All rights reserved.
+This code may only be used under the BSD style license found at https://wasc-io.github.io/LICENSE.txt
+-->
+<link rel="import" href="../polymer/polymer-element.html">
+<!--
+Simple iron-graphql element. Query GraphQL APIs with this elements.
+`iron-graphql` 
+
+@demo demo/index.html
+-->
+
+<dom-module id="iron-graphql">
+  <template>
+    <style>
+       :host {
+        display: block;
+      }
+    </style>
+  </template>
+
+  <script>
+    /** @polymerElement */
+    class IronGraphQL extends Polymer.Element {
+      static get is() {
+        return 'iron-graphql';
+      }
+      static get properties() {
+        return {
+          url: {
+            type: String,
+            observer: '_urlChanged'
+          },
+          query: {
+            type: String,
+            notify: true,
+          },
+          lastResponse: {
+            type: String,
+            notify: true,
+            readOnly: true,
+          }
+        }
+      }
+
+      _urlChanged() {
+        this.generateRequest();
+      }
+
+      generateRequest() {
+        post(this.url, { query: this.query }).then((response) => {
+          this.lastResponse = response;
+          this.dispatchEvent(new CustomEvent('response',  {
+            detail: response,
+            composed: true,
+            bubbles: true,
+          }));
+        })
+          .catch((error) => {
+            console.error(error);
+          });
+      }
+
+    }
+
+    function post(url, body) {
+      return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.responseType = 'json';
+        xhr.open('POST', url);
+
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.setRequestHeader('Accept', 'application/json');
+
+        xhr.onload = () => {
+          if (xhr.status = 200) {
+            resolve(xhr.response);
+          } else {
+            reject(Error(xhr.statusText));
+          }
+        };
+
+        xhr.onerror = () => {
+          reject(Error('Network Error'));
+        };
+
+        xhr.send(JSON.stringify(body));
+
+      })
+    }
+
+    window.customElements.define(IronGraphQL.is, IronGraphQL);
+  </script>
+</dom-module>

@@ -1,0 +1,33 @@
+{
+  "name": "iron-graphql",
+  "description": "Simple functional element to query GraphQL APIs",
+  "main": "iron-graphql.html",
+  "dependencies": {
+    "polymer": "polymer/polymer#^2.0.1",
+    "iron-component-page": "polymerelements/iron-component-page#^2.0.0",
+    "iron-demo-helpers": "polymerelements/iron-demo-helpers#^2.0.0",
+    "iron-test-helpers": "polymerelements/iron-test-helpers#^2.0.0",
+    "test-fixture": "polymerelements/test-fixture#^2.0.1",
+    "web-component-tester": "polymer/web-component-tester#^6.0.0",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.1"
+  },
+  "devDependencies": {},
+  "homepage": "https://github.com/wasc-io/iron-graphql",
+  "authors": [
+    "Nicolai Schmid <nicolai@nicolaischmid.de>"
+  ],
+  "license": "BSD-3-Clause",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "demos": {
+    "Demo": "demo/index.html"
+  },
+  "resolutions": {
+    "test-fixture": "^2.0.1"
+  }
+}
