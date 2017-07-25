@@ -48,11 +48,16 @@ Simple iron-graphql element. Query GraphQL APIs with this elements.
           bearerToken: {
             type: String,
           },
+          auto: {
+            type: Boolean,
+          }
         }
       }
 
       _urlChanged() {
-        this.generateRequest();
+        if (this.auto) {
+          this.generateRequest();
+        }
       }
 
       generateRequest() {
