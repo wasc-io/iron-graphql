@@ -40,7 +40,11 @@ Simple iron-graphql element. Query GraphQL APIs with this elements.
             notify: true,
             readOnly: true,
             value: {}
-          }
+          },
+          headers: {
+            type: Object,
+            notify: true,
+          },
         }
       }
 
@@ -49,10 +53,10 @@ Simple iron-graphql element. Query GraphQL APIs with this elements.
       }
 
       generateRequest() {
-        post(this.url, this.query ).then((response) => {
+        post(this.url, this.query, this.headers).then((response) => {
           this.set('lastResponse.data', response.data);
 
-          this.dispatchEvent(new CustomEvent('response',  {
+          this.dispatchEvent(new CustomEvent('response', {
             detail: response,
             composed: true,
             bubbles: true,
@@ -65,7 +69,7 @@ Simple iron-graphql element. Query GraphQL APIs with this elements.
 
     }
 
-    function post(url, body) {
+    function post(url, body, headers) {
       return new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
         xhr.responseType = 'json';
@@ -73,12 +77,21 @@ Simple iron-graphql element. Query GraphQL APIs with this elements.
 
         xhr.setRequestHeader('Content-Type', 'application/graphql');
         xhr.setRequestHeader('Accept', 'application/json');
+        if (headers) {
+          Object.keys(headers).forEach((requestHeader) => {
+            xhr.setRequestHeader(requestHeader, headers[requestHeader]);
+          });
+        }
 
         xhr.onload = () => {
-          if (xhr.status = 200) {
-            resolve(xhr.response);
+          if (xhr.status == 200) {
+            if (xhr.response.errors) {
+              reject(xhr.response.errors);
+            } else {
+              resolve(xhr.response);
+            }
           } else {
-            reject(Error(xhr.statusText));
+            reject(xhr.response);
           }
         };
 
@@ -86,7 +99,7 @@ Simple iron-graphql element. Query GraphQL APIs with this elements.
           reject(Error('Network Error'));
         };
 
-        xhr.send(JSON.stringify(body));
+        xhr.send(body);
 
       })
     }
