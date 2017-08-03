@@ -35,6 +35,10 @@ Simple iron-graphql element. Query GraphQL APIs with this elements.
             type: String,
             notify: true,
           },
+          variables: {
+            type: Object,
+            notify: true,
+          },
           lastResponse: {
             type: JSON,
             notify: true,
@@ -61,7 +65,16 @@ Simple iron-graphql element. Query GraphQL APIs with this elements.
       }
 
       generateRequest() {
-        post(this.url, this.query, this.headers, this.bearerToken).then((response) => {
+        let body = {
+          query: this.query,
+        };
+
+        if (this.variables) {
+          body.variables = this.variables
+        };
+
+        body.query = this.query;
+        post(this.url, body, this.headers, this.bearerToken).then((response) => {
           this.set('lastResponse.data', response.data);
 
           this.dispatchEvent(new CustomEvent('response', {
@@ -83,7 +96,7 @@ Simple iron-graphql element. Query GraphQL APIs with this elements.
         xhr.responseType = 'json';
         xhr.open('POST', url);
 
-        xhr.setRequestHeader('Content-Type', 'application/graphql');
+        xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.setRequestHeader('Accept', 'application/json');
         if (headers) {
           Object.keys(headers).forEach((requestHeader) => {
