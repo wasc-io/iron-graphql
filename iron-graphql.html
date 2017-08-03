@@ -4,10 +4,21 @@ This code may only be used under the BSD style license found at https://wasc-io.
 -->
 <link rel="import" href="../polymer/polymer-element.html">
 <!--
-Simple iron-graphql element. Query GraphQL APIs with this elements.
-`iron-graphql` 
+An element to query and mutate GraphQL Apis
+  
+    <iron-graphql
+      auto
+      url="https://api.github.com/graphql"
+      query="{ repository(owner: \"wasc-io\", name:\"iron-graphql\") { url } }"
+      last-response="{{response}}"></iron-graphql>
+
+With `auto` set to `true` the element performs a request whenever its `url` changes.
+
+You can trigger a request explicitly by calling `generateRequest` on the element.
 
 @demo demo/index.html
+@polymer
+@customElement
 -->
 
 <dom-module id="iron-graphql">
@@ -20,38 +31,56 @@ Simple iron-graphql element. Query GraphQL APIs with this elements.
   </template>
 
   <script>
-    /** @polymerElement */
     class IronGraphQL extends Polymer.Element {
+      /**
+       * Fires when a response is received
+       * @event response
+       */
+
+
       static get is() {
         return 'iron-graphql';
       }
       static get properties() {
         return {
+          /** The URL of the GraphQL Server, eg https://api.github.com/graphql */
           url: {
             type: String,
             observer: '_urlChanged'
           },
+
+          /** The Query or Mutatiom to send to the Api. */
           query: {
             type: String,
             notify: true,
           },
+
+          /** Custom variables set in the GraphQL Query. */
           variables: {
             type: Object,
             notify: true,
           },
+
+          /** The last response from the Query or Mutation. */
           lastResponse: {
             type: JSON,
             notify: true,
             readOnly: true,
             value: {}
           },
+
+          /** Custom HTTP Headers to send with every request. */
           headers: {
             type: Object,
             notify: true,
           },
+
+          /** The bearer Token to set when using the `Authorization` HTTP Header. */
           bearerToken: {
             type: String,
           },
+
+          /** If true, automatically performs a request when the `url` changes */
           auto: {
             type: Boolean,
           }
@@ -64,6 +93,9 @@ Simple iron-graphql element. Query GraphQL APIs with this elements.
         }
       }
 
+      /**
+       * Perform a request to the Api
+       */
       generateRequest() {
         let body = {
           query: this.query,
