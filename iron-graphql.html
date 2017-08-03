@@ -124,7 +124,7 @@ Simple iron-graphql element. Query GraphQL APIs with this elements.
           reject(Error('Network Error'));
         };
 
-        xhr.send(body);
+        xhr.send(JSON.stringify(body));
 
       })
     }
